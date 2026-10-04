@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FFF9EF">
+  <meta name="description" content="Coffee, sanguches, pizza napoletana y pastelería de Posta.">
+  <title>Posta — menú</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/menu-data.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="announcement"><span class="announcement-star" aria-hidden="true">✳</span> Algo rico, y a otra cosa. <span class="announcement-star" aria-hidden="true">✳</span></div>
+
+  <header class="site-header" id="inicio">
+    <a class="brand-lockup" href="#inicio" aria-label="Posta, ir al inicio">
+      <span class="logo-slot" aria-label="Espacio editable para reemplazar por el logotipo">
+        <span class="logo-slot-inner">TU<br>LOGO</span>
+      </span>
+      <span class="wordmark">POSTA<span class="wordmark-dot">.</span></span>
+    </a>
+
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Abrir menú">
+      <span></span><span></span>
+    </button>
+
+    <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal">
+      <a href="#menu">La carta</a>
+      <a href="#como-pedir">Cómo pedir</a>
+      <a href="#pedidos">Tus pedidos</a>
+      <button class="nav-account" type="button" data-open-account>Mi cuenta <span aria-hidden="true">↗</span></button>
+    </nav>
+
+    <button class="cart-trigger" type="button" aria-label="Abrir carrito" aria-expanded="false" aria-controls="cart-drawer">
+      <span class="cart-trigger-label">Tu bolsa</span>
+      <span class="cart-icon" aria-hidden="true">↗</span>
+      <span class="cart-count" aria-live="polite">0</span>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero section-wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> COFFEE · SANGUCHES · PIZZA</p>
+        <h1 id="hero-title">Vení con hambre.<br><span>Andá con Posta.</span></h1>
+        <p class="hero-description">Coffee, sanguches, pizza napoletana y algo dulce para cerrar. Mirá la carta de Posta y elegí tu favorito.</p>
+        <div class="hero-actions">
+          <a class="button button-red" href="#menu">Ver la carta <span aria-hidden="true">↓</span></a>
+          <a class="hero-note" href="https://www.instagram.com/posta.st/" target="_blank" rel="noopener noreferrer" aria-label="Ver el Instagram de Posta en una nueva pestaña"><span class="note-spark" aria-hidden="true">✳</span> @POSTA.ST</a>
+        </div>
+        <div class="hero-sticker" aria-label="Comida rica sin vueltas"><span>RICO<br>Y POSTA</span><b aria-hidden="true">✳</b></div>
+      </div>
+      <div class="hero-art-wrap">
+        <div class="hero-art-frame">
+          <img class="hero-art" src="/assets/posta-hero.webp" alt="Sándwich tostado, papas doradas y bebida cítrica sobre una mesa cálida" fetchpriority="high">
+          <span class="photo-caption">UN BUEN PLAN, EN UN BOCADO</span>
+        </div>
+        <span class="hero-orbit hero-orbit-one" aria-hidden="true">✳</span>
+        <span class="hero-orbit hero-orbit-two" aria-hidden="true">〰</span>
+      </div>
+    </section>
+
+    <section class="menu-section section-wrap" id="menu" aria-labelledby="menu-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-line"></span> LA CARTA DE POSTA</p>
+          <h2 id="menu-title">Elegí tu <span>posta.</span></h2>
+        </div>
+        <p class="section-heading-note">Coffee · pastelería · sanguches<br>pizza · empanadas · más.</p>
+      </div>
+
+      <div class="category-bar" id="category-bar" role="group" aria-label="Filtrar por categoría"></div>
+      <div class="product-grid" id="product-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="how-section section-wrap" id="como-pedir" aria-labelledby="how-title">
+      <div class="how-intro">
+        <p class="eyebrow eyebrow-light"><span class="eyebrow-line"></span> SIMPLE COMO TIENE QUE SER</p>
+        <h2 id="how-title">Lo bueno<br>no espera.</h2>
+        <p>Armá tu bolsa y dejá el resto en nuestras manos.</p>
+      </div>
+      <div class="how-steps">
+        <article class="how-step"><span class="step-number">01</span><span class="step-doodle" aria-hidden="true">⌁</span><h3>Elegí</h3><p>Encontrá algo que te tiente.</p></article>
+        <article class="how-step"><span class="step-number">02</span><span class="step-doodle" aria-hidden="true">✳</span><h3>Sumá</h3><p>Agregalo a tu bolsa al toque.</p></article>
+        <article class="how-step"><span class="step-number">03</span><span class="step-doodle" aria-hidden="true">↗</span><h3>Disfrutá</h3><p>El checkout se conecta después.</p></article>
+      </div>
+      <span class="how-asterisk" aria-hidden="true">✳</span>
+    </section>
+
+    <section class="account-section section-wrap" id="pedidos" aria-labelledby="account-title">
+      <div class="account-heading">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-line"></span> TU RINCÓN POSTA</p>
+          <h2 id="account-title">Todo en <span>su lugar.</span></h2>
+        </div>
+        <p>Tu cuenta y tus pedidos, a mano.<br><span>Esta vista es solo una maqueta.</span></p>
+      </div>
+      <div class="account-preview-grid">
+        <article class="account-card profile-card">
+          <div class="card-topline"><span class="card-kicker">MI CUENTA</span><span class="demo-badge">VISTA DEMO</span></div>
+          <div class="profile-avatar" aria-hidden="true">P<span>✳</span></div>
+          <h3>Tu lugar en Posta</h3>
+          <p>Ingresá para tener tus datos y favoritos en un solo lugar.</p>
+          <button class="button button-outline" type="button" data-open-account>Ver diseño de cuenta <span aria-hidden="true">↗</span></button>
+        </article>
+        <article class="account-card order-card">
+          <div class="card-topline"><span class="card-kicker">ÚLTIMO PEDIDO</span><span class="order-demo-tag">EJEMPLO</span></div>
+          <div class="order-card-main">
+            <div class="order-number">#P-024</div>
+            <div><h3>Tu próxima comida favorita</h3><p>Este espacio mostrará tus pedidos cuando conectemos la cuenta.</p></div>
+          </div>
+          <div class="order-card-bottom"><span class="order-status"><span></span> Vista de muestra</span><button type="button" class="text-link" data-open-account>Ver el diseño <span aria-hidden="true">↗</span></button></div>
+          <div class="order-doodle" aria-hidden="true">〰</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing-note section-wrap" aria-label="Mensaje de marca">
+      <span class="closing-mark" aria-hidden="true">✳</span>
+      <p>El antojo no se negocia.<br><span>Comé rico. Viví posta.</span></p>
+      <span class="closing-mark closing-mark-right" aria-hidden="true">✳</span>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="footer-wordmark" href="#inicio">POSTA<span>.</span></a>
+    <p>Diseñado con hambre y un poco de tinta.</p>
+    <span class="prototype-note"><span aria-hidden="true">●</span> Prototipo visual · sin pagos ni pedidos reales</span>
+    <a class="social-handle" href="https://www.instagram.com/posta.st/" target="_blank" rel="noopener noreferrer" aria-label="Instagram oficial de Posta, abre en una nueva pestaña">@POSTA.ST</a>
+  </footer>
+
+  <div class="drawer-scrim" hidden></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Tu bolsa" aria-hidden="true">
+    <div class="drawer-header"><div><p class="eyebrow"><span class="eyebrow-line"></span> PARA VOS</p><h2>Tu bolsa<span>.</span></h2></div><button class="icon-button cart-close" type="button" aria-label="Cerrar carrito">×</button></div>
+    <div class="cart-items"></div>
+    <div class="cart-empty"><span class="empty-doodle" aria-hidden="true">〰</span><h3>Está pidiendo algo rico.</h3><p>Sumá algo de la carta y lo guardamos acá mientras explorás.</p><a class="button button-red empty-menu-link" href="#menu">Mirar la carta <span aria-hidden="true">↓</span></a></div>
+    <div class="cart-footer" hidden>
+      <div class="cart-subtotal"><span>Subtotal de muestra</span><strong></strong></div>
+      <p class="cart-demo-note">La compra y el pago todavía no están conectados.</p>
+      <button class="button button-red checkout-demo" type="button">Seguir con el diseño <span aria-hidden="true">↗</span></button>
+    </div>
+  </aside>
+
+  <dialog class="account-dialog" aria-labelledby="dialog-title">
+    <form method="dialog"><button class="icon-button dialog-close" aria-label="Cerrar" value="close">×</button></form>
+    <div class="dialog-stamp" aria-hidden="true">P<span>✳</span></div>
+    <p class="eyebrow"><span class="eyebrow-line"></span> CUENTA POSTA</p>
+    <h2 id="dialog-title">Tu mesa<br><span>te espera.</span></h2>
+    <p class="dialog-copy">Así se verá tu espacio para ingresar y revisar pedidos. El acceso y los datos reales se conectarán más adelante.</p>
+    <form class="login-demo-form">
+      <label for="login-email">Tu email</label>
+      <input id="login-email" type="email" placeholder="vos@correo.com" autocomplete="email" required>
+      <button class="button button-red" type="submit">Ver diseño de cuenta <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="dialog-orders-preview"><span class="dialog-orders-icon" aria-hidden="true">↗</span><span><strong>Tus pedidos, acá.</strong><small>Historial, estados y todo en un solo lugar.</small></span><span class="demo-badge">DEMO</span></div>
+    <p class="dialog-disclaimer">Este formulario es visual: no inicia sesión ni envía tus datos.</p>
+  </dialog>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

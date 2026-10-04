@@ -1,0 +1,10 @@
+{
+  "name": "posta-menu-design",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prototipo visual en Vanilla JavaScript para el menú de Posta.",
+  "scripts": {
+    "start": "node server.js",
+    "build": "rm -rf dist && mkdir -p dist && cp -R public/. dist/"
+  }
+}
