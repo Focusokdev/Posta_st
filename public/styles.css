@@ -101,6 +101,7 @@ button { color: inherit; }
 .product-visual::before { width: 195px; height: 82px; }
 .product-visual::after { width: 220px; height: 104px; transform: rotate(31deg); }
 .product-glyph { position: relative; z-index: 1; font-size: 75px; line-height: 1; filter: drop-shadow(0 11px 5px rgba(23,22,19,.16)); transform: rotate(-7deg); transition: transform .25s ease; }
+.product-image-placeholder { display: inline-block; padding: 10px 16px; border: 1px dashed rgba(23,22,19,.32); border-radius: 6px; color: rgba(23,22,19,.52); background: rgba(255,249,239,.5); font-size: 9px; font-weight: 600; letter-spacing: .06em; line-height: 1.45; text-align: center; text-transform: lowercase; white-space: nowrap; }
 .product-card:hover .product-glyph { transform: rotate(2deg) scale(1.07); }
 .product-ribbon { position: absolute; top: 13px; left: 13px; z-index: 2; padding: 6px 9px; color: white; background: var(--red); font-size: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; transform: rotate(-2deg); }
 .product-mark { position: absolute; top: 10px; right: 15px; z-index: 2; color: var(--ink); font-size: 21px; transform: rotate(12deg); }
@@ -179,6 +180,7 @@ button { color: inherit; }
 .cart-items { flex: 1; overflow: auto; }
 .cart-line { display: grid; grid-template-columns: 54px 1fr auto; gap: 12px; align-items: center; padding: 17px 0; border-bottom: 1px solid var(--line); }
 .cart-line-art { width: 54px; height: 54px; display: grid; place-items: center; background: var(--cream-deep); font-size: 28px; }
+.cart-line-placeholder { display: inline-block; font-size: 5px; font-weight: 600; line-height: 1.35; text-align: center; color: rgba(23,22,19,.5); text-transform: lowercase; }
 .cart-line-copy h3 { margin: 0 0 5px; font-size: 11px; }
 .cart-line-copy p { margin: 0; color: var(--muted); font-size: 9px; }
 .quantity-control { display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; }
@@ -275,6 +277,7 @@ button { color: inherit; }
   .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .product-visual { min-height: 132px; }
   .product-glyph { font-size: 58px; }
+  .product-image-placeholder { padding: 8px 10px; font-size: 7px; }
   .product-ribbon { top: 8px; left: 8px; padding: 5px 6px; font-size: 6px; }
   .product-mark { top: 5px; right: 8px; font-size: 15px; }
   .product-copy { padding: 12px 10px 11px; }

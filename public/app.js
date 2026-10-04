@@ -45,7 +45,7 @@ function renderProducts() {
         <div class="product-visual" style="--art-bg:${product.art || '#eadbc2'}">
           <span class="product-ribbon">${category.shortLabel}</span>
           <span class="product-mark" aria-hidden="true">✳</span>
-          <span class="product-glyph" aria-hidden="true">${product.icon}</span>
+          <span class="product-glyph" aria-hidden="true"><span class="product-image-placeholder">coloca tu<br>imagen aqui</span></span>
         </div>
         <div class="product-copy">
           <div class="product-meta"><span class="product-tag">${category.label}</span>${category.note ? `<span class="product-rating">${category.note}</span>` : ''}</div>
@@ -111,7 +111,7 @@ function renderCart() {
   const items = [...cart.entries()];
   document.querySelector('.cart-items').innerHTML = items.map(([id, quantity]) => {
     const product = products.find((item) => item.id === id);
-    return `<article class="cart-line"><span class="cart-line-art" aria-hidden="true">${product.icon}</span><div class="cart-line-copy"><h3>${product.name}</h3><p>${money.format(product.price)} c/u</p><div class="quantity-control" aria-label="Cantidad de ${product.name}"><button type="button" data-quantity="-1" data-id="${id}" aria-label="Quitar uno">−</button><span>${quantity}</span><button type="button" data-quantity="1" data-id="${id}" aria-label="Agregar uno">+</button></div></div><span class="cart-line-price">${money.format(product.price * quantity)}</span></article>`;
+    return `<article class="cart-line"><span class="cart-line-art" aria-hidden="true"><span class="cart-line-placeholder">coloca tu<br>imagen aqui</span></span><div class="cart-line-copy"><h3>${product.name}</h3><p>${money.format(product.price)} c/u</p><div class="quantity-control" aria-label="Cantidad de ${product.name}"><button type="button" data-quantity="-1" data-id="${id}" aria-label="Quitar uno">−</button><span>${quantity}</span><button type="button" data-quantity="1" data-id="${id}" aria-label="Agregar uno">+</button></div></div><span class="cart-line-price">${money.format(product.price * quantity)}</span></article>`;
   }).join('');
 
   const isEmpty = itemCount === 0;
