@@ -1,0 +1,45 @@
+[
+  {
+    "id": "POSTA-1791151716774",
+    "createdAt": "2026-10-04T22:08:36.774Z",
+    "name": "Agustina Mendoza Mendoza",
+    "phone": "01159478248",
+    "orderType": "delivery",
+    "address": "Madrid 436",
+    "notes": "",
+    "paymentMethod": "efectivo",
+    "paymentLink": "",
+    "items": [
+      {
+        "id": "americano",
+        "name": "Americano",
+        "quantity": 4,
+        "price": 3900,
+        "subtotal": 15600
+      }
+    ],
+    "total": 15600,
+    "status": "pendiente"
+  },
+  {
+    "id": "POSTA-1791151373907",
+    "createdAt": "2026-10-04T22:02:53.907Z",
+    "name": "Test",
+    "phone": "123",
+    "orderType": "delivery",
+    "address": "Calle 1",
+    "notes": "",
+    "paymentMethod": "efectivo",
+    "paymentLink": "",
+    "items": [
+      {
+        "name": "Cafe",
+        "quantity": 2,
+        "price": 100,
+        "subtotal": 200
+      }
+    ],
+    "total": 200,
+    "status": "pendiente"
+  }
+]

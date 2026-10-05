@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FFF9EF">
+  <title>Posta — checkout</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="menu-data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body data-page="checkout">
+  <div class="announcement"><span class="announcement-star" aria-hidden="true">✳</span> Algo rico, y a otra cosa. <span class="announcement-star" aria-hidden="true">✳</span></div>
+
+  <header class="site-header" id="inicio">
+    <a class="brand-lockup" href="/index.html" aria-label="Volver al inicio de Posta">
+      <span class="logo-slot" aria-label="Espacio editable para reemplazar por el logotipo">
+        <span class="logo-slot-inner">TU<br>LOGO</span>
+      </span>
+      <span class="wordmark">POSTA<span class="wordmark-dot">.</span></span>
+    </a>
+    <a class="cart-trigger" href="/index.html" aria-label="Volver a la carta">
+      <span class="cart-trigger-label">Seguir comprando</span>
+      <span class="cart-icon" aria-hidden="true">↗</span>
+    </a>
+  </header>
+
+  <main class="checkout-shell section-wrap">
+    <section class="checkout-card checkout-order">
+      <p class="eyebrow"><span class="eyebrow-line"></span> TU BOLSA</p>
+      <h1>Pedido para confirmar.</h1>
+      <ul id="checkout-items" class="checkout-list"></ul>
+      <div class="checkout-total-row">
+        <span>Total</span>
+        <strong id="checkout-total">$0</strong>
+      </div>
+    </section>
+
+    <section class="checkout-card checkout-form-card">
+      <p class="eyebrow"><span class="eyebrow-line"></span> FINALIZAR PEDIDO</p>
+      <form id="checkout-form" class="checkout-form">
+        <div class="field-row two-col">
+          <label>
+            <span>Nombre</span>
+            <input type="text" name="name" placeholder="Tu nombre" required>
+          </label>
+          <label>
+            <span>Teléfono</span>
+            <input type="tel" name="phone" placeholder="11 5555 1234" required>
+          </label>
+        </div>
+
+        <div class="field-row">
+          <label>
+            <span>Tipo de pedido</span>
+            <select name="orderType" required>
+              <option value="delivery">Delivery</option>
+              <option value="retiro">Retiro en local</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="field-row">
+          <label>
+            <span>Dirección</span>
+            <input type="text" name="address" placeholder="Calle, número, barrio" required>
+          </label>
+        </div>
+
+        <div class="field-row">
+          <label>
+            <span>Notas</span>
+            <textarea name="notes" rows="3" placeholder="Sin cebolla, más salsa, etc."></textarea>
+          </label>
+        </div>
+
+        <fieldset class="payment-methods">
+          <legend>Método de pago</legend>
+          <label><input type="radio" name="paymentMethod" value="mercadopago" checked> Mercado Pago</label>
+          <label><input type="radio" name="paymentMethod" value="efectivo"> Efectivo</label>
+        </fieldset>
+
+        <div class="field-row" id="payment-link-field" hidden>
+          <label>
+            <span>Link de Mercado Pago</span>
+            <input id="payment-link" type="url" name="paymentLink" placeholder="https://mpago.la/…" inputmode="url">
+          </label>
+        </div>
+
+        <button class="button button-red" type="submit">Confirmar pedido <span aria-hidden="true">↗</span></button>
+      </form>
+
+      <div id="checkout-success" class="checkout-success" hidden>
+        <h2>Pedido registrado.</h2>
+        <p>Se guardó correctamente en la web y quedó listo para ver desde el panel del responsable.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

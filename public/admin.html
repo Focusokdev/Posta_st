@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FFF9EF">
+  <title>Posta — panel de pedidos</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body data-page="admin">
+  <div class="announcement"><span class="announcement-star" aria-hidden="true">✳</span> Panel del responsable <span class="announcement-star" aria-hidden="true">✳</span></div>
+
+  <header class="site-header" id="inicio">
+    <a class="brand-lockup" href="/index.html" aria-label="Volver al inicio de Posta">
+      <span class="logo-slot" aria-label="Espacio editable para reemplazar por el logotipo">
+        <span class="logo-slot-inner">TU<br>LOGO</span>
+      </span>
+      <span class="wordmark">POSTA<span class="wordmark-dot">.</span></span>
+    </a>
+  </header>
+
+  <main class="admin-shell section-wrap">
+    <section class="admin-header">
+      <div>
+        <p class="eyebrow"><span class="eyebrow-line"></span> PANEL POSTA</p>
+        <h1>Pedidos recibidos</h1>
+      </div>
+      <button id="refresh-orders" class="button button-outline" type="button">Actualizar <span aria-hidden="true">↻</span></button>
+    </section>
+
+    <section id="orders-panel" class="orders-panel" aria-live="polite"></section>
+  </main>
+</body>
+</html>
