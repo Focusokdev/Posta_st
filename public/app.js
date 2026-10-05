@@ -11,7 +11,7 @@ const API_BASE = (() => {
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     return 'http://127.0.0.1:3000';
   }
-  return '/api';
+  return '';
 })();
 
 const grid = document.querySelector('#product-grid');
@@ -259,6 +259,50 @@ if (isHomePage) {
   renderCategories();
   renderProducts();
   renderCart();
+
+  categoryBar.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-category]');
+    if (!chip) return;
+    currentCategory = chip.dataset.category;
+    document.querySelectorAll('.category-chip').forEach((item) => {
+      item.classList.toggle('is-active', item === chip);
+      item.setAttribute('aria-pressed', String(item === chip));
+    });
+    renderProducts();
+  });
+
+  grid.addEventListener('click', (event) => {
+    const btn = event.target.closest('[data-add]');
+    if (!btn) return;
+    addItem(btn.dataset.add);
+  });
+
+  document.querySelector('.cart-trigger')?.addEventListener('click', openCart);
+  document.querySelector('.cart-close')?.addEventListener('click', closeCart);
+  scrim?.addEventListener('click', closeCart);
+
+  document.querySelector('.cart-items')?.addEventListener('click', (event) => {
+    const btn = event.target.closest('[data-quantity]');
+    if (!btn) return;
+    changeQuantity(btn.dataset.id, Number(btn.dataset.quantity));
+  });
+
+  document.querySelector('.checkout-demo')?.addEventListener('click', navigateToCheckout);
+
+  document.querySelectorAll('[data-open-account]').forEach((btn) => {
+    btn.addEventListener('click', openAccount);
+  });
+
+  const mobileToggle = document.querySelector('.mobile-menu-toggle');
+  const primaryNav = document.querySelector('#primary-nav');
+  mobileToggle?.addEventListener('click', () => {
+    const isOpen = primaryNav?.classList.toggle('is-open');
+    mobileToggle.setAttribute('aria-expanded', String(Boolean(isOpen)));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeCart();
+  });
 }
 
 // Checkout
