@@ -41,5 +41,27 @@
     ],
     "total": 200,
     "status": "pendiente"
+  },
+  {
+    "id": "POSTA-1791202457484",
+    "name": "Test key",
+    "phone": "1224343434",
+    "orderType": "delivery",
+    "address": "sfgsfgsfg",
+    "notes": "",
+    "paymentMethod": "efectivo",
+    "paymentLink": "",
+    "items": [
+      {
+        "id": "espresso",
+        "name": "Espresso",
+        "quantity": 2,
+        "price": 3900,
+        "subtotal": 7800
+      }
+    ],
+    "total": 7800,
+    "status": "pendiente",
+    "createdAt": "2026-10-05T12:14:17.484Z"
   }
 ]
