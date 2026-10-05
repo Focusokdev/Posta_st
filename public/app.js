@@ -176,7 +176,7 @@ function openAccount() {
   if (nav) nav.classList.remove('is-open');
   const toggle = document.querySelector('.mobile-menu-toggle');
   if (toggle) toggle.setAttribute('aria-expanded', 'false');
-  if (accountDialog) accountDialog.showModal();
+  window.location.href = '/admin.html';
 }
 
 function navigateToCheckout() {
