@@ -110,7 +110,7 @@ function renderCategories() {
     const count = products.filter((product) => product.category === category.id).length;
     return `<button class="category-chip" type="button" data-category="${category.id}" aria-pressed="false">${category.label} <span>${String(count).padStart(2, '0')}</span></button>`;
   }).join('');
-  categoryBar.innerHTML = `${allButton}${categoryButtons}<span class="menu-edit-note"><span aria-hidden="true">✳</span> Precios en pesos argentinos</span>`;
+  categoryBar.innerHTML = `${allButton}${categoryButtons}<span class="menu-edit-note"><span aria-hidden="true"><img src="/assets/asterisk.png" alt="" class="star-img"></span> Precios en pesos argentinos</span>`;
 }
 
 function renderProducts() {
@@ -128,7 +128,7 @@ function renderProducts() {
       <article class="product-card">
         <div class="product-visual" style="--art-bg:${product.art || '#eadbc2'}">
           <span class="product-ribbon">${category.shortLabel}</span>
-          <span class="product-mark" aria-hidden="true">✳</span>
+          <span class="product-mark" aria-hidden="true"><img src="/assets/asterisk.png" alt="" class="star-img"></span>
           <span class="product-glyph" aria-hidden="true"><span class="product-image-placeholder">coloca tu<br>imagen aqui</span></span>
         </div>
         <div class="product-copy">
