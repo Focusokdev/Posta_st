@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "heroku.buildpacks"
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "startCommand": "node server.js"
+  }
+}

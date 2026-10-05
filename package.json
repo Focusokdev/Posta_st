@@ -2,9 +2,23 @@
   "name": "posta-menu-design",
   "version": "1.0.0",
   "private": true,
-  "description": "Prototipo visual en Vanilla JavaScript para el menú de Posta.",
+  "description": "Prototipo visual en Vanilla JavaScript para el menú de Posta con carrito, checkout y panel administrativo.",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "start": "node server.js",
+    "dev": "node server.js",
     "build": "rm -rf dist && mkdir -p dist && cp -R public/. dist/"
-  }
+  },
+  "keywords": [
+    "posta",
+    "menu",
+    "restaurant",
+    "javascript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
 }
+

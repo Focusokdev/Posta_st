@@ -1,8 +1,19 @@
 'use strict';
 
-const { categories, products } = window.POSTA_MENU;
+const { categories = [], products = [] } = window.POSTA_MENU || {};
 const money = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
 const cart = new Map();
+const STORAGE_KEYS = { cart: 'posta_cart_v1' };
+
+// Detectar entorno: en producción, window.location.origin; en desarrollo, usar puerto 3000
+const API_BASE = (() => {
+  if (window.location.port === '3000') return '';
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://127.0.0.1:3000';
+  }
+  return '/api';
+})();
+
 const grid = document.querySelector('#product-grid');
 const categoryBar = document.querySelector('#category-bar');
 const drawer = document.querySelector('#cart-drawer');
@@ -20,7 +31,79 @@ function getCategory(id) {
   return categories.find((category) => category.id === id);
 }
 
+function readStoredCart() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEYS.cart);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return;
+    parsed.forEach(([id, quantity]) => {
+      if (typeof id === 'string' && Number.isFinite(quantity) && quantity > 0) {
+        cart.set(id, quantity);
+      }
+    });
+  } catch (error) {
+    console.warn('Error leyendo carrito guardado:', error);
+  }
+}
+
+function persistCart() {
+  try {
+    const entries = [...cart.entries()];
+    window.localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(entries));
+  } catch (error) {
+    console.warn('Error guardando carrito:', error);
+  }
+}
+
+function getCartTotal() {
+  return [...cart.entries()].reduce((sum, [id, quantity]) => {
+    const product = products.find((item) => item.id === id);
+    if (!product || product.price === null) return sum;
+    return sum + product.price * quantity;
+  }, 0);
+}
+
+function getCartItems() {
+  return [...cart.entries()].map(([id, quantity]) => {
+    const product = products.find((item) => item.id === id);
+    if (!product) return null;
+    return {
+      id: product.id,
+      name: product.name,
+      quantity,
+      price: product.price,
+      subtotal: product.price * quantity
+    };
+  }).filter(Boolean);
+}
+
+function saveOrderToServer(orderPayload) {
+  return fetch(`${API_BASE}/api/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(orderPayload)
+  }).then(async (response) => {
+    const json = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(json.error || 'No se pudo guardar el pedido.');
+    }
+    return json;
+  });
+}
+
+function loadOrdersFromServer() {
+  return fetch(`${API_BASE}/api/orders`).then(async (response) => {
+    const json = await response.json().catch(() => []);
+    if (!response.ok) {
+      throw new Error('No se pudieron cargar los pedidos.');
+    }
+    return Array.isArray(json) ? json : [];
+  });
+}
+
 function renderCategories() {
+  if (!categoryBar) return;
   const countAll = products.length;
   const allButton = `<button class="category-chip is-active" type="button" data-category="todos" aria-pressed="true">Todo <span>${String(countAll).padStart(2, '0')}</span></button>`;
   const categoryButtons = categories.map((category) => {
@@ -31,6 +114,7 @@ function renderCategories() {
 }
 
 function renderProducts() {
+  if (!grid) return;
   const visible = currentCategory === 'todos' ? products : products.filter((product) => product.category === currentCategory);
   if (!visible.length) {
     grid.innerHTML = '<p class="no-results">No hay productos en esta sección.</p>';
@@ -59,6 +143,7 @@ function renderProducts() {
 }
 
 function showToast(message) {
+  if (!toast) return;
   toast.textContent = message;
   toast.classList.add('is-visible');
   window.clearTimeout(toastTimer);
@@ -66,22 +151,41 @@ function showToast(message) {
 }
 
 function openCart() {
+  if (!drawer) return;
   drawer.classList.add('is-open');
   drawer.setAttribute('aria-hidden', 'false');
-  document.querySelector('.cart-trigger').setAttribute('aria-expanded', 'true');
+  document.querySelector('.cart-trigger')?.setAttribute('aria-expanded', 'true');
   scrim.hidden = false;
   requestAnimationFrame(() => scrim.classList.add('is-visible'));
-  document.querySelector('.cart-close').focus();
+  document.querySelector('.cart-close')?.focus();
   document.body.style.overflow = 'hidden';
 }
 
 function closeCart() {
+  if (!drawer) return;
   drawer.classList.remove('is-open');
   drawer.setAttribute('aria-hidden', 'true');
-  document.querySelector('.cart-trigger').setAttribute('aria-expanded', 'false');
+  document.querySelector('.cart-trigger')?.setAttribute('aria-expanded', 'false');
   scrim.classList.remove('is-visible');
   window.setTimeout(() => { scrim.hidden = true; }, 230);
   document.body.style.overflow = '';
+}
+
+function openAccount() {
+  const nav = document.querySelector('#primary-nav');
+  if (nav) nav.classList.remove('is-open');
+  const toggle = document.querySelector('.mobile-menu-toggle');
+  if (toggle) toggle.setAttribute('aria-expanded', 'false');
+  if (accountDialog) accountDialog.showModal();
+}
+
+function navigateToCheckout() {
+  const items = getCartItems();
+  if (!items.length) {
+    showToast('Tu bolsa está vacía. Agregá algo primero.');
+    return;
+  }
+  window.location.href = '/checkout.html';
 }
 
 function addItem(id) {
@@ -91,6 +195,7 @@ function addItem(id) {
     return;
   }
   cart.set(id, (cart.get(id) || 0) + 1);
+  persistCart();
   renderCart();
   showToast(`${product.name}: sumado a tu bolsa.`);
 }
@@ -99,88 +204,224 @@ function changeQuantity(id, amount) {
   const next = (cart.get(id) || 0) + amount;
   if (next <= 0) cart.delete(id);
   else cart.set(id, next);
+  persistCart();
   renderCart();
 }
 
 function renderCart() {
   const itemCount = [...cart.values()].reduce((sum, quantity) => sum + quantity, 0);
-  const total = [...cart.entries()].reduce((sum, [id, quantity]) => sum + products.find((product) => product.id === id).price * quantity, 0);
-  document.querySelector('.cart-count').textContent = String(itemCount);
-  document.querySelector('.cart-count').setAttribute('aria-label', `${itemCount} artículos en la bolsa`);
+  const total = getCartTotal();
+  
+  const cartCount = document.querySelector('.cart-count');
+  if (cartCount) {
+    cartCount.textContent = String(itemCount);
+    cartCount.setAttribute('aria-label', `${itemCount} artículos en la bolsa`);
+  }
 
-  const items = [...cart.entries()];
-  document.querySelector('.cart-items').innerHTML = items.map(([id, quantity]) => {
-    const product = products.find((item) => item.id === id);
-    return `<article class="cart-line"><span class="cart-line-art" aria-hidden="true"><span class="cart-line-placeholder">coloca tu<br>imagen aqui</span></span><div class="cart-line-copy"><h3>${product.name}</h3><p>${money.format(product.price)} c/u</p><div class="quantity-control" aria-label="Cantidad de ${product.name}"><button type="button" data-quantity="-1" data-id="${id}" aria-label="Quitar uno">−</button><span>${quantity}</span><button type="button" data-quantity="1" data-id="${id}" aria-label="Agregar uno">+</button></div></div><span class="cart-line-price">${money.format(product.price * quantity)}</span></article>`;
-  }).join('');
+  const cartItems = document.querySelector('.cart-items');
+  if (cartItems) {
+    const items = getCartItems();
+    cartItems.innerHTML = items.map(({ id, name, quantity, price, subtotal }) => `
+      <article class="cart-line">
+        <span class="cart-line-art" aria-hidden="true"><span class="cart-line-placeholder">coloca tu<br>imagen aqui</span></span>
+        <div class="cart-line-copy">
+          <h3>${name}</h3>
+          <p>${money.format(price)} c/u</p>
+          <div class="quantity-control" aria-label="Cantidad de ${name}">
+            <button type="button" data-quantity="-1" data-id="${id}" aria-label="Quitar uno">−</button>
+            <span>${quantity}</span>
+            <button type="button" data-quantity="1" data-id="${id}" aria-label="Agregar uno">+</button>
+          </div>
+        </div>
+        <span class="cart-line-price">${money.format(subtotal)}</span>
+      </article>
+    `).join('');
+  }
 
   const isEmpty = itemCount === 0;
-  document.querySelector('.cart-empty').hidden = !isEmpty;
-  document.querySelector('.cart-footer').hidden = isEmpty;
-  document.querySelector('.cart-subtotal strong').textContent = money.format(total);
+  const cartEmpty = document.querySelector('.cart-empty');
+  const cartFooter = document.querySelector('.cart-footer');
+  if (cartEmpty) cartEmpty.hidden = !isEmpty;
+  if (cartFooter) cartFooter.hidden = isEmpty;
+  
+  const cartSubtotal = document.querySelector('.cart-subtotal strong');
+  if (cartSubtotal) cartSubtotal.textContent = money.format(total);
 }
 
-function openAccount() {
-  document.querySelector('#primary-nav').classList.remove('is-open');
-  document.querySelector('.mobile-menu-toggle').setAttribute('aria-expanded', 'false');
-  accountDialog.showModal();
-}
+// Detectar páginas
+const isHomePage = Boolean(grid && categoryBar && drawer);
+const isCheckoutPage = document.body.dataset.page === 'checkout';
+const isAdminPage = document.body.dataset.page === 'admin';
 
-grid.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-add]');
-  if (button && !button.disabled) addItem(button.dataset.add);
-});
-
-categoryBar.addEventListener('click', (event) => {
-  const chip = event.target.closest('[data-category]');
-  if (!chip) return;
-  currentCategory = chip.dataset.category;
-  document.querySelectorAll('.category-chip').forEach((item) => {
-    const active = item === chip;
-    item.classList.toggle('is-active', active);
-    item.setAttribute('aria-pressed', String(active));
-  });
+// Home
+if (isHomePage) {
+  readStoredCart();
+  renderCategories();
   renderProducts();
-});
+  renderCart();
+}
 
-document.querySelector('.cart-trigger').addEventListener('click', openCart);
-document.querySelector('.cart-close').addEventListener('click', closeCart);
-scrim.addEventListener('click', closeCart);
-document.querySelector('.cart-items').addEventListener('click', (event) => {
-  const button = event.target.closest('[data-quantity]');
-  if (button) changeQuantity(button.dataset.id, Number(button.dataset.quantity));
-});
-document.querySelector('.empty-menu-link').addEventListener('click', closeCart);
-document.querySelector('.checkout-demo').addEventListener('click', () => showToast('El checkout se conecta más adelante. Esta demo no procesa pagos.'));
+// Checkout
+if (isCheckoutPage) {
+  readStoredCart();
+  const checkoutList = document.querySelector('#checkout-items');
+  const checkoutTotal = document.querySelector('#checkout-total');
+  const checkoutForm = document.querySelector('#checkout-form');
+  const mpField = document.querySelector('#payment-link-field');
+  const mpValue = document.querySelector('#payment-link');
+  const successBox = document.querySelector('#checkout-success');
 
-document.querySelectorAll('[data-open-account]').forEach((button) => button.addEventListener('click', openAccount));
-document.querySelector('.login-demo-form').addEventListener('submit', (event) => {
-  event.preventDefault();
-  showToast('El acceso real se conectará más adelante. No se enviaron tus datos.');
-  accountDialog.close();
-});
-accountDialog.addEventListener('click', (event) => {
-  if (event.target === accountDialog) accountDialog.close();
-});
+  function renderCheckoutSummary() {
+    if (!checkoutList || !checkoutTotal) return;
+    const items = getCartItems();
+    const total = getCartTotal();
+    if (!items.length) {
+      checkoutList.innerHTML = '<li class="empty-order">Tu bolsa está vacía.</li>';
+      checkoutTotal.textContent = money.format(0);
+      return;
+    }
+    checkoutList.innerHTML = items.map(({ name, quantity, price, subtotal }) => `
+      <li>
+        <span>${name} × ${quantity}</span>
+        <strong>${money.format(subtotal)}</strong>
+      </li>
+    `).join('');
+    checkoutTotal.textContent = money.format(total);
+  }
 
-document.querySelector('.mobile-menu-toggle').addEventListener('click', (event) => {
-  const button = event.currentTarget;
-  const nav = document.querySelector('#primary-nav');
-  const isOpen = button.getAttribute('aria-expanded') === 'true';
-  button.setAttribute('aria-expanded', String(!isOpen));
-  button.setAttribute('aria-label', isOpen ? 'Abrir menú' : 'Cerrar menú');
-  nav.classList.toggle('is-open', !isOpen);
-});
+  function updateMpVisibility() {
+    if (!mpField || !mpValue) return;
+    const isMpSelected = document.querySelector('input[name="paymentMethod"]:checked')?.value === 'mercadopago';
+    mpField.hidden = !isMpSelected;
+    mpValue.required = isMpSelected;
+  }
 
-document.querySelectorAll('.primary-nav a').forEach((link) => link.addEventListener('click', () => {
-  document.querySelector('#primary-nav').classList.remove('is-open');
-  document.querySelector('.mobile-menu-toggle').setAttribute('aria-expanded', 'false');
-}));
+  if (checkoutForm) {
+    document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
+      radio.addEventListener('change', updateMpVisibility);
+    });
 
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && drawer.classList.contains('is-open')) closeCart();
-});
+    checkoutForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(checkoutForm);
+      const items = getCartItems();
+      if (!items.length) {
+        showToast('Tu bolsa está vacía.');
+        return;
+      }
 
-renderCategories();
-renderProducts();
-renderCart();
+      const paymentMethod = formData.get('paymentMethod');
+      const paymentLink = String(formData.get('paymentLink') || '').trim();
+      const name = String(formData.get('name') || '').trim();
+      const phone = String(formData.get('phone') || '').trim();
+      const orderType = String(formData.get('orderType') || 'delivery');
+      const address = String(formData.get('address') || '').trim();
+      const notes = String(formData.get('notes') || '').trim();
+
+      const payload = {
+        name,
+        phone,
+        orderType,
+        address,
+        notes,
+        paymentMethod,
+        paymentLink,
+        items,
+        total: getCartTotal()
+      };
+
+      try {
+        const result = await saveOrderToServer(payload);
+        cart.clear();
+        persistCart();
+        renderCheckoutSummary();
+        checkoutForm.reset();
+        if (successBox) successBox.hidden = false;
+        successBox?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (paymentMethod === 'mercadopago' && paymentLink) {
+          window.open(paymentLink, '_blank', 'noopener');
+        }
+        showToast(`Pedido guardado correctamente (${result.orderId || 'ok'}).`);
+      } catch (error) {
+        console.error('Error al guardar pedido:', error);
+        showToast(error.message || 'No se pudo registrar el pedido.');
+      }
+    });
+  }
+
+  renderCheckoutSummary();
+  updateMpVisibility();
+}
+
+// Admin
+if (isAdminPage) {
+  const ordersPanel = document.querySelector('#orders-panel');
+  const refreshButton = document.querySelector('#refresh-orders');
+
+  function formatMoney(value) {
+    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
+  }
+
+  async function loadOrders() {
+    if (!ordersPanel) return;
+    try {
+      const orders = await loadOrdersFromServer();
+      if (!orders.length) {
+        ordersPanel.innerHTML = `
+          <div class="empty-admin-state">
+            <span class="empty-doodle" aria-hidden="true">〰</span>
+            <h2>No hay pedidos todavía.</h2>
+            <p>Cuando alguien complete el checkout desde la web principal, aparecerá acá.</p>
+          </div>
+        `;
+        return;
+      }
+
+      ordersPanel.innerHTML = orders.map((order) => `
+        <article class="admin-order-card">
+          <header class="admin-order-head">
+            <div>
+              <p class="admin-order-id">${order.id}</p>
+              <h2>${order.name || 'Cliente sin nombre'}</h2>
+            </div>
+            <span class="admin-order-status">${order.status || 'pendiente'}</span>
+          </header>
+
+          <div class="admin-order-meta">
+            <p><strong>Tel:</strong> ${order.phone || '—'}</p>
+            <p><strong>Tipo:</strong> ${order.orderType || 'delivery'}</p>
+            <p><strong>Pago:</strong> ${order.paymentMethod === 'mercadopago' ? 'Mercado Pago' : 'Efectivo'}</p>
+            <p><strong>Total:</strong> ${formatMoney(order.total || 0)}</p>
+          </div>
+
+          <div class="admin-order-address">
+            <strong>Dirección:</strong>
+            <span>${order.address || '—'}</span>
+          </div>
+
+          <div class="admin-order-notes">
+            <strong>Notas:</strong>
+            <span>${order.notes || 'Sin notas.'}</span>
+          </div>
+
+          <div class="admin-order-items">
+            <strong>Productos:</strong>
+            <ul>
+              ${(order.items || []).map((item) => `<li>${item.name} × ${item.quantity} — ${formatMoney(item.subtotal)}</li>`).join('')}
+            </ul>
+          </div>
+
+          ${order.paymentMethod === 'mercadopago' && order.paymentLink ? `<p class="admin-order-link"><strong>Link MP:</strong> <a href="${order.paymentLink}" target="_blank" rel="noopener noreferrer">Abrir enlace</a></p>` : ''}
+        </article>
+      `).join('');
+    } catch (error) {
+      console.error('Error al leer pedidos:', error);
+      ordersPanel.innerHTML = '<p class="admin-error">No se pudieron cargar los pedidos.</p>';
+    }
+  }
+
+  if (refreshButton) {
+    refreshButton.addEventListener('click', loadOrders);
+  }
+  loadOrders();
+}
